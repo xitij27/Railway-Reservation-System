@@ -1,0 +1,817 @@
+/////////////////////////////////////////////////// HEADER FILES  ///////////////////////////////////////////////////////////////
+#include<iostream.h>
+#include<conio.h>
+#include<time.h>
+#include<fstream.h>
+#include<ctype.h>
+#include<string.h>
+#include<process.h>
+#include<stdio.h>
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////      FUNCTION PROTOTYPES  //////////////////////////////////////////////
+void menu(void);
+void get_booking_details(void);
+void show_available_trains(void);
+void change_train_details(void);
+void access_train_details(void);
+void cancel(void);
+void send(void);
+void admin(void);
+void showall(void);
+void delete_all(void);
+int bring(void);
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////        CLASSES        ///////////////////////////////////////////////
+class date
+{
+public:
+	int day;
+	int mon;
+	int yea;
+
+	date()
+	{
+		day = mon= yea= 0;
+	}
+
+	void getdate()
+	{  time_t t = time(0);
+      tm* tPtr = localtime(&t);
+      cout << "\nToday's Date: " <<(tPtr->tm_mday)<<"/"<< ((tPtr->tm_mon)+1) <<"/"<< ((tPtr->tm_year)+1900)<< endl;
+      x:
+		cout << "\nDay (dd): "; cin >> day;
+		cout << "Month (mm): "; cin >> mon;
+		cout << "Year (yyyy): "; cin >> yea;
+
+      if(yea<=0 || mon<=0 || day<=0)
+      {cout<<"enter valid values:"; goto x;}
+
+      while(yea < (tPtr->tm_year)+1900 || yea>(tPtr->tm_year)+1901)
+      {cout<<"enter valid values:"; goto x;}
+
+      if(yea==((tPtr->tm_year)+1900))
+      { while(mon<(tPtr->tm_mon)+1 || mon>12)
+        {cout<<"enter valid values:"; goto x;}
+      }
+
+      if(yea!=((tPtr->tm_year)+1900))
+      { while(mon>12)
+        {cout<<"enter valid values:"; goto x;}
+      }
+
+      switch(mon)
+        { case 1: while(day>31)
+                  {cout<<"enter valid values:"; goto x;}
+                  break;
+          case 2: if(((tPtr->tm_year)+1900)%4==0)
+                  {while(day>29)
+                   {cout<<"enter valid values:"; goto x;}}
+                  else
+                  {while(day>28)
+                   {cout<<"enter valid values:"; goto x;}
+                  }
+                  break;
+          case 3: while(day>31)
+                  {cout<<"enter valid values:"; goto x;}
+                  break;
+          case 4: while(day>30)
+                  {cout<<"enter valid values:"; goto x;}
+                  break;
+          case 5: while(day>31)
+                  {cout<<"enter valid values:"; goto x;}
+                  break;
+          case 6: while(day>30)
+                  {cout<<"enter valid values:"; goto x;}
+                  break;
+          case 7: while(day>31)
+                  {cout<<"enter valid values:"; goto x;}
+                  break;
+          case 8: while(day>31)
+                  {cout<<"enter valid values:"; goto x;}
+                  break;
+          case 9: while(day>30)
+                  {cout<<"enter valid values:"; goto x;}
+                  break;
+          case 10:while(day>31)
+                  {cout<<"enter valid values:"; goto x;}
+                  break;
+          case 11:while(day>30)
+                  {cout<<"enter valid values:"; goto x;}
+                  break;
+          case 12:while(day>31)
+                  {cout<<"enter valid values:"; goto x;}
+                  break;
+        }
+
+     if(mon==(tPtr->tm_mon)+1  && yea==((tPtr->tm_year)+1900))
+      { while(day<=tPtr->tm_mday)
+        {cout<<"enter valid values:"; goto x;}
+      }
+  }
+	void showdate()
+	{
+		cout << "\nDate: " << day << '-' << mon << '-' << yea;
+	}
+};
+
+class tim                   //before: class time
+{
+public:
+	int hou;
+	int min;
+
+	tim()
+	{
+		hou = min = 0;
+	}
+
+	void gettime()
+	{
+		cout << "\nHours: "; cin >> hou;
+		cout << "\nMinutes: "; cin >> min;
+	}
+	void showtime()
+	{
+		cout << "\nTime: " << hou << ':' << min;
+	}
+};
+
+class train_details
+{
+public:
+	char start_position[50];    //train places
+	char final_position[50];
+	int no_of_passengers;
+	int train_no;
+	int duration;
+	date d1;
+	tim t1;
+	char train[50];
+	char tier;
+	float base_fare;
+
+	train_details()
+	{
+		strcpy(start_position," ");
+		strcpy(final_position," ");
+		duration=no_of_passengers = train_no=0;
+		strcpy(train," ");
+		base_fare = 100.0;
+		tier = ' ';
+	}
+
+	void fillin()
+	{
+		switch (train_no)
+		{
+		case 1111://1
+			strcpy(start_position,"N D Railway Station(New Delhi)");
+			strcpy(final_position,"Sealdah(Kolkata)");
+			strcpy(train,"Teesta Torsha");
+			duration = 12;
+			t1.hou = 15;
+			t1.min = 50;
+			if (tier == 's') base_fare = 1600;
+			else if (tier == 'a') base_fare = 4000;
+			else if (tier == 'b') base_fare = 3200;
+			else {cout << "\nInvalid tier choice. Returning to main menu!!. Press any key to continue "; getch(); menu();}
+			break;
+
+		case 1112://2
+			strcpy(start_position,"N D Railway Station(New Delhi)");
+			strcpy(final_position,"Puratchi(Chennai)");
+			strcpy(train,"G T Express");
+			duration = 25;
+			t1.hou = 20;
+			t1.min = 20;
+			if (tier == 's') base_fare = 2400;
+			else if (tier == 'a') base_fare = 6000;
+			else if (tier == 'b') base_fare = 5000;
+			else {cout << "\nInvalid tier choice. Returning to main menu!!. Press any key to continue "; getch(); menu();}
+			break;
+
+		case 1113://3
+			strcpy(start_position,"N D Railway Station(New Delhi)");
+			strcpy(final_position,"C S T(Mumbai)");
+			strcpy(train,"Mumbai Rajdhani");
+			duration = 15;
+			t1.hou = 16;
+			t1.min = 0;
+			if (tier == 's') base_fare = 1800;
+			else if (tier == 'a') base_fare = 4800;
+			else if (tier == 'b') base_fare = 4000;
+			else {cout << "\nInvalid tier choice. Returning to main menu!!. Press any key to continue "; getch(); menu();}
+			break;
+
+		case 2111://4
+			strcpy(start_position,"Sealdah(Kolkata)");
+			strcpy(final_position,"N D Railway Station(New Delhi)");
+			strcpy(train,"Coromandal Express");
+			duration = 13;
+			t1.hou = 12;
+			t1.min = 20;
+			if (tier == 's') base_fare = 1700;
+			else if (tier == 'a') base_fare = 4300;
+			else if (tier == 'b') base_fare = 3600;
+			else {cout << "\nInvalid tier choice. Returning to main menu!!. Press any key to continue "; getch(); menu();}
+			break;
+
+		case 2112://5i
+			strcpy(start_position,"Sealdah(Kolkata)");
+			strcpy(final_position,"Puratchi(Chennai)");
+			strcpy(train,"HWH Express");
+			duration = 16;
+			t1.hou = 16;
+			t1.min = 30;
+			if (tier == 's') base_fare = 2600;
+			else if (tier == 'a') base_fare = 4000;
+			else if (tier == 'b') base_fare = 3200;
+			else {cout << "\nInvalid tier choice. Returning to main menu!!. Press any key to continue "; getch(); menu();}
+			break;
+
+		case 2113://6
+			strcpy(start_position,"Sealdah(Kolkata)");
+			strcpy(final_position,"C S T(Mumbai)");
+			strcpy(train,"SCL Express");
+			duration = 20;
+			t1.hou = 20;
+			t1.min = 00;
+			if (tier == 's') base_fare = 1900;
+			else if (tier == 'a') base_fare = 3900;
+			else if (tier == 'b') base_fare = 3300;
+			else {cout << "\nInvalid tier choice. Returning to main menu!!. Press any key to continue "; getch(); menu();}
+			break;
+
+		case 3111://7
+			strcpy(start_position,"Puratchi(Chennai)");
+			strcpy(final_position,"Sealdah(Kolkata)");
+			strcpy(train,"Teesta Torsha");
+			duration = 14;
+			t1.hou = 18;
+			t1.min = 50;
+			if (tier == 's') base_fare = 2900;
+			else if (tier == 'a') base_fare = 5000;
+			else if (tier == 'b') base_fare = 3900;
+			else {cout << "\nInvalid tier choice. Returning to main menu!!. Press any key to continue "; getch(); menu();}
+			break;
+
+		case 3112://8
+			strcpy(start_position,"Puratchi(Chennai)");
+			strcpy(final_position,"N D Railway Station(New Delhi)");
+			strcpy(train,"SCL Express");
+			duration = 16;
+			t1.hou = 11;
+			t1.min = 20;
+			if (tier == 's') base_fare = 3800;
+			else if (tier == 'a') base_fare = 5000;
+			else if (tier == 'b') base_fare = 4100;
+			else {cout << "\nInvalid tier choice. Returning to main menu!!. Press any key to continue "; getch(); menu();}
+			break;
+
+		case 3113://9
+			strcpy(start_position,"Puratchi(Chennai)");
+			strcpy(final_position,"C S T(Mumbai)");
+			strcpy(train,"Mumbai Rajdhani");
+			duration = 18;
+			t1.hou = 9;
+			t1.min = 0;
+			if (tier == 's') base_fare = 1300;
+			else if (tier == 'a') base_fare = 2600;
+			else if (tier == 'b') base_fare = 2100;
+			else {cout << "\nInvalid tier choice. Returning to main menu!!. Press any key to continue "; getch(); menu();}
+			break;
+
+		case 4111://10
+			strcpy(start_position,"C S T(Mumbai)");
+			strcpy(final_position,"N D Railway Station(New Delhi)");
+			strcpy(train,"HWH Express");
+			duration = 15;
+			t1.hou = 15;
+			t1.min = 50;
+			if (tier == 's') base_fare = 1200;
+			else if (tier == 'a') base_fare = 3300;
+			else if (tier == 'b') base_fare = 2600;
+			else {cout << "\nInvalid tier choice. Returning to main menu!!. Press any key to continue "; getch(); menu();}
+			break;
+
+		case 4112://11
+			strcpy(start_position,"C S T(Mumbai)");
+			strcpy(final_position,"Puratchi(Chennai) ");
+			strcpy(train,"G T Express");
+			duration = 16;
+			t1.hou = 20;
+			t1.min = 20;
+			if (tier == 's') base_fare = 1100;
+			else if (tier == 'a') base_fare = 3100;
+			else if (tier == 'b') base_fare = 2300;
+		   else {cout << "\nInvalid tier choice. Returning to main menu!!. Press any key to continue "; getch(); menu();}
+			break;
+
+		case 4113://12
+			strcpy(start_position,"C S T(Mumbai)");
+			strcpy(final_position,"Sealdah(Kolkata)");
+			strcpy(train,"Coromandal Express");
+			duration = 14;
+			t1.hou = 16;
+			t1.min = 0;
+			if (tier == 's') base_fare = 2100;
+			else if (tier == 'a') base_fare = 4400;
+			else if (tier == 'b') base_fare = 3800;
+			else {cout << "\nInvalid tier choice. Returning to main menu!!. Press any key to continue "; getch(); menu();}
+			break;
+
+		default:
+			cout << "\nInvalid Train number.Returning to main menu!!";
+         cout<<"\nPress any key to continue!!"; getch();
+         clrscr();
+         menu();
+  			break;
+		}
+	}
+	void get_train_details()
+	{
+		cout << "Choose train no.:" << endl;
+		cin>> train_no;
+		cout << "Enter date of travel:" << endl;
+		d1.getdate();
+		cout << "In which tier do you wish to travel?"<<endl;
+		cout << "s-> Sleeper | a-> AC 2 Tier | b-> AC 3 \nTier: ";
+		cin >> tier;
+		fillin();
+
+		cout << "How many passengers ? (Maximum 10) : "; cin >> no_of_passengers;
+		//cout << "\nPlease note that children above 3 years of age need full ticket." << endl;
+
+	}
+
+	void show_train_details()
+	{  cout<<endl;
+      for(int i=0;i<60;i++) cout<<"=";
+      cout << "\nTrain Name: " << train << endl;
+      cout << "Train Number: " << train_no <<endl;
+		cout << "\nStarting Destination: " << start_position << endl;
+		cout << "Final Destination: " << final_position << endl;
+		cout << "Duration of Journey: " << duration;
+		d1.showdate();
+		t1.showtime();
+		cout << "\nNumber of passenger(s): " << no_of_passengers;
+	}
+};
+
+class passenger
+{
+public:
+	char name[20];
+	int age;
+	char gender;
+	int contact_no;
+	int aadhar_no;
+
+	passenger()
+	{
+		strcpy(name," ");
+		gender = ' ';
+		age = aadhar_no = contact_no = 0;
+	}
+
+	void get_passenger_details()
+	{
+      cout<<endl;
+		cout << "Enter name:";
+		cin>>(name);
+		cout << "Enter age:";
+		cin >> age;
+		cout << "Enter gender(M/F): ";
+		cin >> gender;
+		cout << "Enter contact number: ";
+		cin >> contact_no;
+		cout << "Enter aadhar number: ";
+		cin >> aadhar_no;
+      cout<<endl;
+	}
+	void show_passenger_details()
+	{
+		cout << "\n\nName: " << name << endl;
+		cout << "Age: " << age << endl;
+		cout << "Gender: " << gender << endl;
+		cout << "Contact Number: " << contact_no << endl;
+		cout << "Aadhar number: " << aadhar_no;
+	}
+};
+
+class book_details : public train_details, public passenger           // public passenger added now
+{
+public:
+	passenger p[10];
+	char booking_reference[9];
+	float price;
+
+	void passenger_details()
+	{
+      for (int j = 0; j <(no_of_passengers); j++)
+	    {
+	   	 p[j].get_passenger_details();
+	    }
+	}
+
+	book_details()
+	{
+		strcpy(booking_reference,"12345678");
+		price = 0;
+	}
+
+	void calculate_price()
+	{
+		price = no_of_passengers * base_fare;
+	}
+
+   void modify()
+{
+	cout << "\nPreviously entered details: " << endl;
+	cout << "Starting Destination: " << start_position << endl;
+	cout << "Final Destination: " << final_position << endl;
+	cout << "Train Number: " << train_no << endl;
+	cout << "Train: " << train << endl;
+	cout << "Tier: " << tier;
+	d1.showdate();
+	t1.showtime();
+
+   for (int j = 0; j <(no_of_passengers); j++)
+	    {
+	   	 p[j].show_passenger_details();
+	    }
+
+	cout << "\n\nEnter New Details ->" << endl;
+   for (int j = 0; j <(no_of_passengers); j++)
+	    {
+	   	 p[j].get_passenger_details();
+	    }
+
+
+	fillin();
+	cout << "The details have been updated. They can be viewed in the Main Menu";
+   getch();
+}
+
+void b_r_gen()
+{
+	int x = train_no, y;
+	y = bring();
+	for (int i = 3; i >=0; i--)
+	{
+		booking_reference[i] = char(x % 10) + 48;
+		x = x / 10;
+	}
+
+	booking_reference[4] = tier;
+
+	for (int j = 7; j > 4; j--)
+	{
+		booking_reference[j] = (y % 10) + 48;
+		y = y / 10;
+	}
+
+}
+};
+
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+////////////////////////////////////////////     MAIN FUNCTION    ////////////////////////////////////////////////////
+void main()
+{
+	menu();
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////         FUNCTION   DEFINITIONS   //////////////////////////////////////////
+void menu()
+{
+	char ch;
+	do
+	{
+		system("cls");
+      for(int i=0;i<170;i++) cout<<"=";
+
+      cout<<endl<<endl;
+      cout<<"\t\t\t\t\t\t\t\tWELCOME TO INDIAN RAILWAYS E-TICKETING SERVICE" << endl<<endl;
+      for(int i=0;i<170;i++) cout<<"=";
+      cout<<endl;
+		cout << "  1. View Train Time Table" << endl;
+		cout << "  2. Book Train Ticket" << endl;
+		cout << "  3. Change  Details" << endl;
+		cout << "  4. View Ticket" << endl;
+		cout << "  5. Cancel Ticket" << endl;
+		cout << "  6. Admin" << endl;
+		cout << "  0. Exit" << endl;
+		cout << "\nEnter your choice :";
+      ch=getch();
+      cout<<ch<<endl;
+      if (ch =='1')
+		{
+			show_available_trains(); getch();
+		}
+		if (ch =='2')
+		{
+			show_available_trains();
+			get_booking_details();
+		}
+		if (ch =='3')
+		{
+			change_train_details();
+		}
+		if (ch =='4')
+		{
+			access_train_details();
+		}
+		if (ch =='5')
+		{
+			cancel();
+		}
+		if (ch =='6')
+		{
+			admin();
+		}
+		if (ch =='0')
+		{
+			exit(0);
+		}
+      if(ch!='1'||ch!='2'||ch!='3'||ch!='4'||ch!='5'||ch!='0'||isalpha(ch))
+      {
+         continue;
+      }
+	} while (ch !='0');
+
+}
+
+void book_ticket(book_details b)
+{
+	//create booking reference number
+	b.b_r_gen();
+   cout<<"\nYour booking reference number :";
+	cout << b.booking_reference<<endl;
+	cout << "Note down your reference number. Press any key to continue. ";
+   getch();
+
+	//Now we will record everything(train details, passengers)
+	fstream f1;
+	f1.open("BOOKDETAILS.DAT", ios::in | ios::out | ios::binary | ios::app);
+	f1.write((char*)&b, sizeof(b));
+	f1.close();
+}
+
+void get_booking_details()
+{
+	book_details b;
+	b.get_train_details();
+	char ch;
+	b.passenger_details();
+	b.calculate_price();
+	cout << "\nThe net price of ticket(s) are : " << b.price;
+	cout << "\nDo you want to book a ticket for this train(y/n):";
+	cin >> ch;
+	if (ch == 'y'||ch== 'Y')
+	{
+		book_ticket(b);
+	}
+	else return;
+}
+
+
+void cancel()
+{
+	char ch;
+	cout << "\nAre you sure you want to cancel your ticket:(y/n) ";
+	cin >> ch;
+	if (ch == 'y')
+	{
+		//deleting record
+		char a[9];
+		cout << "\nEnter you booking reference: ";
+		gets(a);
+
+		book_details obj;
+		ifstream f1;
+		f1.open("BOOKDETAILS.DAT", ios::binary|ios::in);
+		ofstream f2;
+		f2.open("TEMP.DAT", ios::out | ios::binary);
+		while (f1.read((char*)&obj, sizeof(obj)))
+		{
+			if (strcmp((obj.booking_reference),a)==0)
+				continue;
+         else
+            f2.write((char*)&obj, sizeof(obj));
+		}
+		f1.close();
+		f2.close();
+		remove("BOOKDETAILS.DAT");
+		rename("TEMP.DAT", "BOOKDETAILS.DAT");
+	}
+   cout<<"\nTicket cancelled successfully. Press any key to continue !!!";
+   getch();
+}
+
+void change_train_details()
+{
+	cout<<"\nPlease note that only passenger details can be changed\n";
+	char a[9];
+	book_details obj;
+	long pos;
+	char found = 'f';
+	cout << "\nEnter your booking reference:";
+	cin >> a;
+	fstream f;
+	f.open("BOOKDETAILS.DAT", ios::in | ios::out | ios::binary);
+	while (!f.eof())
+	{
+		pos = f.tellg();
+		f.read((char*)&obj, sizeof(obj));
+		if (strcmp((obj.booking_reference),a)==0)
+		{
+			obj.modify();
+			f.seekg(pos);
+			f.write((char*)&obj, sizeof(obj));
+			break;
+		}
+	}
+	if (found != 'f')
+		cout << "\nError, record not found. Returning to menu";
+	f.seekg(0);
+	f.close();
+}
+
+
+
+void access_train_details()
+{
+
+	int flag = 1;
+	char a[9];
+	book_details obj;
+	cout << "Enter Booking Reference no(8 characters max): ";
+	cin >> a;
+
+	fstream f;
+	f.open("BOOKDETAILS.DAT", ios::in | ios::binary);
+	while (f.read((char*)&obj, sizeof(obj)))
+	{
+		if (strcmp((obj.booking_reference),a)==0)
+		{
+			flag = 0;
+			obj.show_train_details();
+			for (int i = 0; i < obj.no_of_passengers; i++)
+				obj.p[i].show_passenger_details();  cout<<endl;
+			break;
+		}
+	}
+
+	if (flag == 1)
+		cout << "\nError, record not found. Returning to menu."<<endl;
+      cout<<"\nPress any key to return ";
+
+	getch();
+	f.close();
+}
+
+void show_available_trains()
+{
+cout << "\nAVAILABLE TRAINS :\n";
+
+      for(int i=0;i<157;i++) cout<<"=";
+      cout<<endl;
+
+		cout << " \tTRAIN NAME \t\tTRAIN TIMINGS\tJOURNEY DURATION(HRS)\tSTARTING DESTINATION\tFINAL DESTINATION   SLEEPER AC2Tier AC3Tier TRAIN NO.\n";
+
+      for(int i=0;i<157;i++) cout<<"=";
+      cout<<endl;
+
+		cout << " \tTeesta Torsha \t\t  15:50 \t\t12 \t\tNew Delhi Rly Stn \tSealdah(Kolkata)     1600    4000    3200     1111 \n";
+      for(int i=0;i<157;i++) cout<<"-";cout<<endl;
+		cout << " \tG T Express \t\t  20:20 \t\t25 \t\tNew Delhi Rly Stn \tPuratchi(Chennai)    2400    6000    5000     1112 \n";
+      for(int i=0;i<157;i++) cout<<"-";cout<<endl;
+		cout << " \tMumbai Rajdhani \t  16:00 \t\t15 \t\tNew Delhi Rly Stn \tC S T(Mumbai)        1800    4800    4000     1113 \n";
+      for(int i=0;i<157;i++) cout<<"-";cout<<endl;
+
+		cout << " \tCoromandal Express \t  12:20 \t\t13 \t\tSealdah(Kolkata) \tNew Delhi Rly Stn    1700    4300    3600     2111 \n";
+      for(int i=0;i<157;i++) cout<<"-";cout<<endl;
+		cout << " \tHWH Express \t\t  16:30 \t\t16 \t\tSealdah(Kolkata) \tPuratchi(Chennai)    2600    4000    3200     2112 \n";
+      for(int i=0;i<157;i++) cout<<"-";cout<<endl;
+		cout << " \tSCL Express \t\t  20:00 \t\t20 \t\tSealdah(Kolkata) \tC S T(Mumbai)        1900    3900    3300     2113 \n";
+      for(int i=0;i<157;i++) cout<<"-";cout<<endl;
+
+		cout << " \tTeesta Torsha \t\t  18:50 \t\t14 \t\tPuratchi(Chennai) \tSealdah(Kolkata)     2900    5000    3900     3111 \n";
+      for(int i=0;i<157;i++) cout<<"-";cout<<endl;
+		cout << " \tSCL Express \t\t  11:20 \t\t16 \t\tPuratchi(Chennai) \tNew Delhi Rly Stn    3800    5000    4100     3112 \n";
+      for(int i=0;i<157;i++) cout<<"-";cout<<endl;
+		cout << " \tMumbai Rajdhani \t  09:00 \t\t18 \t\tPuratchi(Chennai) \tC S T(Mumbai)        1300    2600    2100     3113 \n";
+      for(int i=0;i<157;i++) cout<<"-";cout<<endl;
+
+		cout << " \tHWH Express \t\t  15:50 \t\t15 \t\tC S T(Mumbai) \t\tNew Delhi Rly Stn    1200    3300    2600     4111 \n";
+      for(int i=0;i<157;i++) cout<<"-";cout<<endl;
+		cout << " \tG T Express \t\t  20:20 \t\t16 \t\tC S T(Mumbai) \t\tPuratchi(Chennai)    1100    3100    2300     4112 \n";
+      for(int i=0;i<157;i++) cout<<"-";cout<<endl;
+		cout << " \tCoromandal Express \t  16:00 \t\t14 \t\tC S T(Mumbai) \t\tSealdah(Kolkata)     2100    4400    3800     4113 \n";
+      for(int i=0;i<157;i++) cout<<"=";cout<<endl;
+      cout<<endl;
+
+}
+
+void admin()
+{
+	cout << "\nEnter Password: ";
+	char pass[15];
+    for(int i=0;i<15;i++)
+    { pass[i]=getch();
+     cout<<"*";
+    }
+
+	if (strcmpi(pass, "computerproject") != 0)
+	{
+		cout << "\nWrong Password.";
+		return;
+	}
+	int ch1;
+	do
+	{
+		system("cls");
+      cout<<"\t\t\t\t\t\t\t\t\tWELCOME TO ADMIN MENU";
+		cout << " \nChoose:\n 1.Resend Important Number \n 2.Show Everything\n 0.Exit"<<endl;
+		cin >> ch1;
+
+		if (ch1 == 1)
+		{
+			send();
+		}
+		else if (ch1 == 2)
+		{
+			showall();
+		}
+		else if (ch1 == 3)
+		{
+                                   delete_all();
+		}
+		else if (ch1 == 0)
+		{
+			break;
+		}
+	} while (ch1 != 0);
+}
+void send()
+{
+	int give = 111;
+	ofstream fo("impnumb.dat", ios::binary);
+	fo.write((char*)&give, sizeof(give));
+	fo.close();
+
+}
+
+void showall()
+{
+	ifstream f1;
+	f1.open("BOOKDETAILS.DAT", ios::binary | ios::in);
+	book_details b;
+	while (f1.read((char*)&b, sizeof(b)))
+	{
+		b.show_train_details();
+      for (int i = 0; i < b.no_of_passengers; i++)
+				b.p[i].show_passenger_details();
+      cout<<"\nbooking reference: "<<b.booking_reference<<endl;
+	}
+	f1.close();
+   getch();
+
+}
+
+void delete_all()
+{
+	showall();
+	remove("BOOKDETAILS.DAT");
+
+}
+
+int bring()
+{
+
+	int get;
+	ifstream fi("impnumb.dat", ios::binary);
+	fi.read((char*)&get, sizeof(get));
+	fi.close();
+
+	int newgive = get + 1;
+	ofstream fo("impnumb.dat", ios::binary);
+	fo.write((char*)&newgive, sizeof(newgive));
+	fo.close();
+
+	return get;
+}
+
+
+
+//////////////////////////////////////////////////////////////      THE   END  /////////////////////////////////////////////////////////////////
+
